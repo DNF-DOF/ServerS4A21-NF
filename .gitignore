@@ -1,0 +1,8 @@
+# 编译输出
+**/bin/
+build/
+
+# VS 临时文件
+.vs/
+*.user
+*.suo

@@ -1,0 +1,2 @@
+// NF.xui 作为 RCDATA 资源嵌入 DLL，改布局后直接编译即可（无需手动生成头文件）。
+NF_XUI RCDATA "NF.xui"
