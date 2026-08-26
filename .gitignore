@@ -1,7 +1,21 @@
 # 编译输出
 **/bin/
 build/
-
+Debug/
+# 构建产物
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.dll
+*.exe
+*.iobj
+*.ipdb
+*.tlog
+*.recipe
+*.log
+NF/
 # VS 临时文件
 .vs/
 *.user

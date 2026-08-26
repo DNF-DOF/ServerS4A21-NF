@@ -6,7 +6,7 @@
 
 #include <string>
 
-#include "../GameNative/GameNativeApi.h"
+#include "GameNativeApi.h"
 #include "NFConfig.h"
 #include "NFAutoPickup.h"
 #include "NFEquipProcessor.h"
