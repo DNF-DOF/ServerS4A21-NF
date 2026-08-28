@@ -37,6 +37,7 @@ constexpr int kPickupButton = 10;
 constexpr int kAutoGradeButton = 11;
 constexpr int kGmButton = 12;
 constexpr int kProcessButton = 13;
+constexpr int kSkillFullscreenButton = 14;   // 技能全屏
 constexpr int kMapMoveFirst = 20;      // 20左 21右 22上 23下
 // 单选选项 ID（CNCheckBox inside CNRadioButton）
 constexpr int kPickupModeRadioFirst = 60;   // 60吸物 61发包
@@ -378,6 +379,9 @@ int __fastcall HandleControlEvent(void*, void*, int controlId, int eventType,
         break;
     case kProcessButton:
         Dispatch(Command::ProcessEquip);
+        break;
+    case kSkillFullscreenButton:
+        Dispatch(Command::ToggleSkillFullscreen);
         break;
     default:
         break;

@@ -28,9 +28,10 @@ enum ActionId : int
     kMapMoveDown = 4,    // Alt+Down
     kTogglePickup = 5,   // Alt+Q
     kProcessEquip = 6,   // Alt+F
+    kToggleSkillFullscreen = 8,  // Alt+K
 };
 
-// 热键集合（对应 [热键] 段的 7 个配置键）。
+// 热键集合（对应 [热键] 段的 8 个配置键）。
 struct Hotkeys
 {
     HotkeyBinding toggle_ui;
@@ -40,6 +41,7 @@ struct Hotkeys
     HotkeyBinding move_down;
     HotkeyBinding toggle_pickup;
     HotkeyBinding process_equip;
+    HotkeyBinding skill_fullscreen;
 };
 
 // 安装钩子：传入 DLL 模块句柄 + 游戏窗口线程 ID + 动作回调（在游戏线程同步调用）。

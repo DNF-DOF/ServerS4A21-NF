@@ -14,6 +14,7 @@ enum class Command {
   TogglePickup,      // 自动拾取 开/关
   ToggleAutoGrade,   // 自动评分 开/关（功能实现后续提供，这里仅开关占位）
   ToggleGmMode,      // GM模式 开/关（修补 GM 权限判定）
+  ToggleSkillFullscreen,  // 技能全屏 开/关
   SetPickupMode,     // 拾取模式，argument = 0(吸物) 1(发包)
   SetFilterMode,     // 过滤模式，argument = 0(黑名单) 1(白名单)
   SetMoveMode,       // 顺图模式，argument = 0(坐标) 1(强制)
@@ -37,6 +38,7 @@ struct UiState {
   bool pickupEnabled = false;       // kPickupButton 是否勾选
   bool autoGradeEnabled = false;    // kAutoGradeButton 是否勾选（自动评分开关占位）
   bool gmEnabled = false;           // kGmButton 是否勾选（GM模式开关）
+  bool skillFullscreenEnabled = false;  // kSkillFullscreenButton 是否勾选
   int pickupMode = -1;              // 0吸物 1发包 / -1不刷新
   int filterMode = -1;              // 0黑名单 1白名单 / -1不刷新
   int moveMode = -1;                // 0坐标 1强制 / -1不刷新

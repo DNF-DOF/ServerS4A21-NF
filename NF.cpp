@@ -18,6 +18,7 @@
 #include "NFNativeUi.h"
 #include "NFNotice.h"
 #include "NFScore.h"
+#include "NFSkillFullscreen.h"
 #include "NFGmMode.h"
 
 namespace {
@@ -103,6 +104,7 @@ nf_ui::UiState BuildUiState() {
     state.equipActions[q] = cfg.equip_action[q];
   state.autoGradeEnabled = g_auto_grade_enabled;
   state.gmEnabled = gm::Enabled();
+  state.skillFullscreenEnabled = skillfs::Enabled();
 
 
   // 直接在状态栏看文本。
@@ -115,10 +117,11 @@ nf_ui::UiState BuildUiState() {
   {
     wchar_t tmp[512] = {0};
     _snwprintf_s(tmp, _TRUNCATE,
-      L"当前配置：拾取：%s｜评分：%s｜GM：%s｜模式：%s｜过滤：%s｜顺图：%s\r\n装备品级：",
+      L"当前配置：拾取：%s｜评分：%s｜GM：%s｜全屏：%s｜模式：%s｜过滤：%s｜顺图：%s\r\n装备品级：",
       state.pickupEnabled ? L"开" : L"关",
       state.autoGradeEnabled ? L"开" : L"关",
       state.gmEnabled ? L"开" : L"关",
+      state.skillFullscreenEnabled ? L"开" : L"关",
       (state.pickupMode >= 0 && state.pickupMode < _countof(kPickupModeStr))
         ? kPickupModeStr[state.pickupMode] : L"?",
       (state.filterMode >= 0 && state.filterMode < _countof(kFilterModeStr))
@@ -211,6 +214,13 @@ void OnHotkeyAction(int action_id, int arg) {
     case kProcessEquip:
       gthread::Post([] { equip::ProcessAsync(); });
       break;
+    case kToggleSkillFullscreen:
+      gthread::Post([] {
+        skillfs::SetEnabled(!skillfs::Enabled());
+        notice::Send(skillfs::Enabled() ? L"技能全屏已开启" : L"技能全屏已关闭");
+        ApplyAndRefresh();
+      });
+      break;
   }
 }
 
@@ -237,6 +247,11 @@ void HandlePanelCommand(nf_ui::Command command, int argument) {
       ApplyAndRefresh();
       break;
     }
+    case nf_ui::Command::ToggleSkillFullscreen:
+      skillfs::SetEnabled(!skillfs::Enabled());
+      notice::Send(skillfs::Enabled() ? L"技能全屏已开启" : L"技能全屏已关闭");
+      ApplyAndRefresh();
+      break;
     case nf_ui::Command::SetPickupMode: {
       config::Settings cfg = config::Get();
       cfg.pickup_mode = argument;
@@ -440,6 +455,7 @@ LRESULT CALLBACK ControllerProc(HWND window, UINT message, WPARAM wParam,
           equip::Tick();
           RefreshUi();
           grade::Tick(g_auto_grade_enabled);
+          skillfs::Tick();
         });
       }
       return 0;

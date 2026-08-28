@@ -23,6 +23,27 @@ constexpr uintptr_t kGmPermissionMode = 0x01763ED0;  // GM权限模式（代码�
 constexpr uint32_t kOffTimeBase  = 2138148;    // 时间基址(作为偏移使用)  0x20A0E4
 
 // ---------------------------------------------------------------------------
+// 技能全屏（参考 86-jp 已验证 + adddemo sub_40DAEC 逐值复刻）
+// 数据来源: 参考/新绝对地址.txt + adddemo(S4A21-86CN.exe) 分析 + 实机测试。
+// ---------------------------------------------------------------------------
+constexpr uintptr_t kSkillCall       = 23250400;  // 技能CALL  0x162C5E0
+constexpr uint32_t  kOffCamp         = 1872;      // 实体 -> 阵营  0x750
+constexpr uint32_t  kOffMonsterHp    = 13276;     // 实体 -> 血量  0x33DC
+constexpr uint32_t  kSkillSlotSize   = 4096;      // 技能参数槽大小（分配一次复用）
+constexpr uint32_t  kSkillSlotSelf   = 0x00;      // 槽: 当前玩家对象
+constexpr uint32_t  kSkillSlotCode   = 0x04;      // 槽: 技能代码
+constexpr uint32_t  kSkillSlotDamage = 0x08;      // 槽: 伤害
+constexpr uint32_t  kSkillSlotX      = 0x18;      // 槽: 目标X
+constexpr uint32_t  kSkillSlotY      = 0x1C;      // 槽: 目标Y
+constexpr uint32_t  kSkillSlotZ      = 0x20;      // 槽: 目标Z
+constexpr uint32_t  kSkillSlotMaxTgt = 0x58;      // 槽: 目标数上限(demo 写 0xFFFF)
+constexpr uint32_t  kSkillSlotExtra  = 0x5C;      // 槽: 附加(demo 写 0xFFFF)
+
+// 技能全屏目标过滤（demo sub_40D75E 逐值复刻）：类型 + 阵营双白名单。
+constexpr int32_t kSkillTargetTypes[] = {529, 273, 545};        // 目标实体类型
+constexpr int32_t kSkillTargetCamps[] = {100, 110, 120, 101, 50};  // 敌对阵营
+
+// ---------------------------------------------------------------------------
 // CALL 地址 (VA)
 // ---------------------------------------------------------------------------
 constexpr uintptr_t kSendCall     = 41215696;   // 发包CALL  0x274E6D0

@@ -52,6 +52,13 @@ struct Settings {
   std::wstring hotkey_move_right  = L"Alt+Right";
   std::wstring hotkey_toggle_pickup = L"Alt+Q";
   std::wstring hotkey_process_equip = L"Alt+F";
+  std::wstring hotkey_skill_fullscreen = L"Alt+K";  // 技能全屏
+
+  // [技能全屏] —— 技能CALL 参数（需与服务器技能表匹配，热重载生效）
+  int skill_code = 20044;     // 技能代码（参考默认技能代码1，按服务器实际技能调整）
+  int skill_damage = 99999;   // 技能伤害
+  int skill_interval = 500;   // 轮询间隔(ms)，下限 50
+  int skill_count = 8;        // 每轮目标数量 1..20（默认 8）
 
   // [调试]
   int debug_enabled = 0;  // 1=写NF.log；0=关闭所有日志写

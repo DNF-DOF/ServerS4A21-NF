@@ -14,6 +14,7 @@ const wchar_t kSecPickup[] = L"自动拾取";
 const wchar_t kSecMove[] = L"顺图";
 const wchar_t kSecEquip[] = L"装备处理";
 const wchar_t kSecHotkey[] = L"热键";
+const wchar_t kSecSkillFull[] = L"技能全屏";
 const wchar_t kSecDebug[] = L"调试";
 
 const wchar_t* const kQualityKeys[kQualityCount] = {
@@ -101,6 +102,7 @@ void LoadFromFile() {
   s.hotkey_move_right    = ReadStr(kSecHotkey, L"顺图右",     s.hotkey_move_right.c_str());
   s.hotkey_toggle_pickup = ReadStr(kSecHotkey, L"拾取开关",   s.hotkey_toggle_pickup.c_str());
   s.hotkey_process_equip = ReadStr(kSecHotkey, L"一键处理",   s.hotkey_process_equip.c_str());
+  s.hotkey_skill_fullscreen = ReadStr(kSecHotkey, L"技能全屏", s.hotkey_skill_fullscreen.c_str());
 
   // [调试]
   s.debug_enabled = ReadInt(kSecDebug, L"debug", 1);
@@ -109,6 +111,12 @@ void LoadFromFile() {
   // [自动拾取]/[装备处理] 中仅过滤ID与名称过滤持久化（无 UI 输入，用户直接改 ini）。
   s.filter_ids  = ReadStr(kSecPickup, L"过滤ID", s.filter_ids.c_str());
   s.name_filter = ReadStr(kSecEquip,  L"名称过滤", s.name_filter.c_str());
+
+  // [技能全屏] —— 技能CALL 参数持久化（无 UI 输入，用户直接改 ini）。
+  s.skill_code     = ReadInt(kSecSkillFull, L"技能代码", s.skill_code);
+  s.skill_damage   = ReadInt(kSecSkillFull, L"伤害",     s.skill_damage);
+  s.skill_interval = ReadInt(kSecSkillFull, L"频率",     s.skill_interval);
+  s.skill_count    = ReadInt(kSecSkillFull, L"目标数",   s.skill_count);
 
   {
     std::lock_guard<std::mutex> lock(g_mutex);
@@ -128,10 +136,17 @@ void LoadPersisted() {
   patch.hotkey_move_right    = ReadStr(kSecHotkey, L"顺图右",     patch.hotkey_move_right.c_str());
   patch.hotkey_toggle_pickup = ReadStr(kSecHotkey, L"拾取开关",   patch.hotkey_toggle_pickup.c_str());
   patch.hotkey_process_equip = ReadStr(kSecHotkey, L"一键处理",   patch.hotkey_process_equip.c_str());
+  patch.hotkey_skill_fullscreen = ReadStr(kSecHotkey, L"技能全屏", patch.hotkey_skill_fullscreen.c_str());
   patch.debug_enabled = ReadInt(kSecDebug, L"debug", 1);
   if (patch.debug_enabled != 0) patch.debug_enabled = 1;
   patch.filter_ids  = ReadStr(kSecPickup, L"过滤ID",  patch.filter_ids.c_str());
   patch.name_filter = ReadStr(kSecEquip,  L"名称过滤", patch.name_filter.c_str());
+
+  // [技能全屏] 4 参数
+  patch.skill_code     = ReadInt(kSecSkillFull, L"技能代码", patch.skill_code);
+  patch.skill_damage   = ReadInt(kSecSkillFull, L"伤害",     patch.skill_damage);
+  patch.skill_interval = ReadInt(kSecSkillFull, L"频率",     patch.skill_interval);
+  patch.skill_count    = ReadInt(kSecSkillFull, L"目标数",   patch.skill_count);
 
   std::lock_guard<std::mutex> lock(g_mutex);
   g_settings.hotkey_toggle_ui     = patch.hotkey_toggle_ui;
@@ -141,9 +156,14 @@ void LoadPersisted() {
   g_settings.hotkey_move_right    = patch.hotkey_move_right;
   g_settings.hotkey_toggle_pickup = patch.hotkey_toggle_pickup;
   g_settings.hotkey_process_equip = patch.hotkey_process_equip;
+  g_settings.hotkey_skill_fullscreen = patch.hotkey_skill_fullscreen;
   g_settings.debug_enabled        = patch.debug_enabled;
   g_settings.filter_ids           = patch.filter_ids;
   g_settings.name_filter          = patch.name_filter;
+  g_settings.skill_code           = patch.skill_code;
+  g_settings.skill_damage         = patch.skill_damage;
+  g_settings.skill_interval       = patch.skill_interval;
+  g_settings.skill_count          = patch.skill_count;
 }
 
 // 只持久化热键 + 调试 + 过滤ID/名称过滤（后两者无 UI 输入，由用户手改 ini）。
@@ -151,7 +171,7 @@ void LoadPersisted() {
 // 不写文件（内存路径见 Set：g_settings 全量更新，本函数只落盘持久化字段）。
 void SaveToFile(const Settings& s) {
   InterlockedExchange(&g_saving, 1);
-  // [热键] —— 保证 ini 里这 7 个键永远存在，用户手动改时不用猜字段名。
+  // [热键] —— 保证 ini 里这 8 个键永远存在，用户手动改时不用猜字段名。
   WriteStr(kSecHotkey, L"呼出界面", s.hotkey_toggle_ui);
   WriteStr(kSecHotkey, L"顺图上",   s.hotkey_move_up);
   WriteStr(kSecHotkey, L"顺图下",   s.hotkey_move_down);
@@ -159,6 +179,13 @@ void SaveToFile(const Settings& s) {
   WriteStr(kSecHotkey, L"顺图右",   s.hotkey_move_right);
   WriteStr(kSecHotkey, L"拾取开关", s.hotkey_toggle_pickup);
   WriteStr(kSecHotkey, L"一键处理", s.hotkey_process_equip);
+  WriteStr(kSecHotkey, L"技能全屏", s.hotkey_skill_fullscreen);
+
+  // [技能全屏] —— 技能CALL 参数持久化（无 UI 输入，用户直接改 ini）。
+  WriteInt(kSecSkillFull, L"技能代码", s.skill_code);
+  WriteInt(kSecSkillFull, L"伤害",     s.skill_damage);
+  WriteInt(kSecSkillFull, L"频率",     s.skill_interval);
+  WriteInt(kSecSkillFull, L"目标数",   s.skill_count);
 
   // [调试]
   WriteInt(kSecDebug, L"debug", s.debug_enabled);
