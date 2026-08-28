@@ -144,7 +144,10 @@ nf_ui::UiState BuildUiState() {
       disas += r.disassembled[q];
     }
     wchar_t buf[128] = {0};
-    _snwprintf_s(buf, _TRUNCATE, L"上次处理：扫描 %d，卖 %d，分解 %d",
+    _snwprintf_s(buf, _TRUNCATE,
+                 r.aborted
+                     ? L"上次处理中止：扫描 %d，已卖 %d，已分解 %d"
+                     : L"上次处理：扫描 %d，卖 %d，分解 %d",
                  r.scanned, sold, disas);
     state.statusText = cfgLine + L"\r\n" + buf;
   } else {
@@ -425,6 +428,7 @@ LRESULT CALLBACK ControllerProc(HWND window, UINT message, WPARAM wParam,
         // 周期 Tick：驱动界面轮询与状态刷新。
         gthread::Post([] {
           nf_ui::Poll();
+          equip::Tick();
           RefreshUi();
           grade::Tick(g_auto_grade_enabled);
         });
