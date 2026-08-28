@@ -25,6 +25,7 @@
     <ClCompile Include="NFRuntime.cpp" />
     <ClCompile Include="NFNativeUi.cpp" />
     <ClCompile Include="NFScore.cpp" />
+    <ClCompile Include="NFGmMode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NFAddresses.h" />
@@ -37,6 +38,7 @@
     <ClInclude Include="NFMemory.h" />
     <ClInclude Include="NFNativeUi.h" />
     <ClInclude Include="NFScore.h" />
+    <ClInclude Include="NFGmMode.h" />
     <ClInclude Include="NFNotice.h" />
     <ClInclude Include="NFAutoPickup.h" />
     <ClInclude Include="NFPacket.h" />

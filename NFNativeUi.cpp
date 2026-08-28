@@ -35,6 +35,7 @@ constexpr int kButtonClickEvent = 13;
 // CNRadioButton 内的 CNCheckBox 也走 kButtonClickEvent，ID 即选项索引。
 constexpr int kPickupButton = 10;
 constexpr int kAutoGradeButton = 11;
+constexpr int kGmButton = 12;
 constexpr int kProcessButton = 13;
 constexpr int kMapMoveFirst = 20;      // 20左 21右 22上 23下
 // 单选选项 ID（CNCheckBox inside CNRadioButton）
@@ -371,6 +372,9 @@ int __fastcall HandleControlEvent(void*, void*, int controlId, int eventType,
         break;
     case kAutoGradeButton:
         Dispatch(Command::ToggleAutoGrade);
+        break;
+    case kGmButton:
+        Dispatch(Command::ToggleGmMode);
         break;
     case kProcessButton:
         Dispatch(Command::ProcessEquip);

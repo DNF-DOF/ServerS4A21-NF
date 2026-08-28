@@ -3,6 +3,8 @@
 
 #include <windows.h>
 
+#include <cstring>
+
 #include "NFAddresses.h"
 
 namespace mem {
@@ -59,6 +61,45 @@ bool WriteDword(uintptr_t address, uint32_t value) {
   if (!IsWritable(address, 4)) return false;
   *reinterpret_cast<volatile uint32_t*>(address) = value;
   return true;
+}
+
+size_t ReadBytes(uintptr_t address, void* buffer, size_t size) {
+  if (!buffer || size == 0) return 0;
+  if (!IsReadable(address, size)) return 0;
+  __try {
+    memcpy(buffer, reinterpret_cast<const void*>(address), size);
+    return size;
+  } __except (EXCEPTION_EXECUTE_HANDLER) {
+    return 0;
+  }
+}
+
+bool WriteBytes(uintptr_t address, const void* data, size_t size) {
+  if (!data || size == 0) return false;
+  if (!IsWritable(address, size)) {
+    // 代码段常仅 PAGE_EXECUTE_READ：临时改保护后写入（等效 WriteProcessMemory）。
+    DWORD old_protect = 0;
+    if (!VirtualProtect(reinterpret_cast<LPVOID>(address), size,
+                        PAGE_EXECUTE_READWRITE, &old_protect))
+      return false;
+    bool ok = false;
+    __try {
+      memcpy(reinterpret_cast<void*>(address), data, size);
+      ok = true;
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+      ok = false;
+    }
+    DWORD restored = 0;
+    VirtualProtect(reinterpret_cast<LPVOID>(address), size, old_protect,
+                  &restored);
+    return ok;
+  }
+  __try {
+    memcpy(reinterpret_cast<void*>(address), data, size);
+    return true;
+  } __except (EXCEPTION_EXECUTE_HANDLER) {
+    return false;
+  }
 }
 
 std::wstring ReadWideString(uintptr_t address, size_t max_bytes) {

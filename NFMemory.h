@@ -28,6 +28,12 @@ float ReadFloat(uintptr_t address, float def = 0.0f);
 // 安全写入 4 字节，返回是否成功。
 bool WriteDword(uintptr_t address, uint32_t value);
 
+// 安全读取 size 字节到 buffer（调用方保证 buffer 足够），返回实际读取字节数（0=失败）。
+size_t ReadBytes(uintptr_t address, void* buffer, size_t size);
+
+// 安全写入 size 字节；代码段(PAGE_EXECUTE_READ)会临时提权后写入。返回是否成功。
+bool WriteBytes(uintptr_t address, const void* data, size_t size);
+
 // 读取宽字符串（最多 max_bytes 字节），失败返回空串。
 std::wstring ReadWideString(uintptr_t address, size_t max_bytes);
 

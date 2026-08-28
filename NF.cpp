@@ -18,6 +18,7 @@
 #include "NFNativeUi.h"
 #include "NFNotice.h"
 #include "NFScore.h"
+#include "NFGmMode.h"
 
 namespace {
 
@@ -101,6 +102,7 @@ nf_ui::UiState BuildUiState() {
   for (int q = 0; q < config::kQualityCount; ++q)
     state.equipActions[q] = cfg.equip_action[q];
   state.autoGradeEnabled = g_auto_grade_enabled;
+  state.gmEnabled = gm::Enabled();
 
 
   // 直接在状态栏看文本。
@@ -113,9 +115,10 @@ nf_ui::UiState BuildUiState() {
   {
     wchar_t tmp[512] = {0};
     _snwprintf_s(tmp, _TRUNCATE,
-      L"当前配置：拾取：%s｜评分：%s｜模式：%s｜过滤：%s｜顺图：%s\r\n装备品级：",
+      L"当前配置：拾取：%s｜评分：%s｜GM：%s｜模式：%s｜过滤：%s｜顺图：%s\r\n装备品级：",
       state.pickupEnabled ? L"开" : L"关",
       state.autoGradeEnabled ? L"开" : L"关",
+      state.gmEnabled ? L"开" : L"关",
       (state.pickupMode >= 0 && state.pickupMode < _countof(kPickupModeStr))
         ? kPickupModeStr[state.pickupMode] : L"?",
       (state.filterMode >= 0 && state.filterMode < _countof(kFilterModeStr))
@@ -228,6 +231,12 @@ void HandlePanelCommand(nf_ui::Command command, int argument) {
       notice::Send(g_auto_grade_enabled ? L"自动评分已开启" : L"自动评分已关闭");
       ApplyAndRefresh();
       break;
+    case nf_ui::Command::ToggleGmMode: {
+      const bool on = gm::Toggle();
+      notice::Send(on ? L"GM模式已开启" : L"GM模式已关闭");
+      ApplyAndRefresh();
+      break;
+    }
     case nf_ui::Command::SetPickupMode: {
       config::Settings cfg = config::Get();
       cfg.pickup_mode = argument;

@@ -19,6 +19,7 @@ constexpr uintptr_t kScoreBase    = 61189444;   // 评分基址  0x3A5AD44
 constexpr uintptr_t kSendBase     = 62377700;   // 发包基址  0x3B7CEE4
 constexpr uintptr_t kDecryptBase  = 62428696;   // 解密基址  0x3B89618
 constexpr uintptr_t kAutoPickFlag = 26326926;   // 自动捡物标志  0x191B78E
+constexpr uintptr_t kGmPermissionMode = 0x01763ED0;  // GM权限模式（代码段，开启即赋予GM权限）
 constexpr uint32_t kOffTimeBase  = 2138148;    // 时间基址(作为偏移使用)  0x20A0E4
 
 // ---------------------------------------------------------------------------
